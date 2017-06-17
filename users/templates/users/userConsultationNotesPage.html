@@ -1,0 +1,20 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}{% load user_extras %}
+{% block meta_title %}My Consultation Notes{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-success" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>My Consultation Notes</strong>
+      </div>
+      <div class="panel-body" style="padding:10px;">
+	{{object.consultation_note|safe}}
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% endblock %}

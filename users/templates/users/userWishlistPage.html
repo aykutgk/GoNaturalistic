@@ -1,0 +1,47 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}My Wish List{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-success" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>My Wish List</strong>
+      </div>
+      <div class="panel-body" style="padding: 0px;">
+        <div class="list-group" style=" margin-bottom: 0px;">
+          {% for wishlist in wishlists %}
+	  {% with consultation=wishlist.consultation %}
+          <a href="{% url 'consultations:consultationPage' consultation.slug %}" class="list-group-item" style=" padding: 10px; border: none; border-top: 1px solid #d6e9c6" >
+          <div class="media">
+            <img class="img-rounded pull-left" src="{% static 'img' %}{% url 'consultations:index' %}{{consultation.consultation_small_picture_url}}" alt="{{ consultation.consultation_title }}">
+            <div class="media-body">
+              <h4 class="media-heading" style="margin-bottom: 2px;">{{ consultation.consultation_title }}</h4>
+              {#Consultation Categories################}
+              {% with consultationCategories=consultation.consultation_category_set.all %}
+              {% if consultationCategories|length > 0 %}
+                <div style="margin-bottom: 2px;">
+                {% for category in consultationCategories %}
+                  <span class="label label-{{ category.consultation_category.category_style }}"><strong>{{ category.consultation_category.category_name }}</strong></span>
+                {% endfor %}
+                </div>
+              {% endif %}
+              {% endwith %}
+              {#########}
+              <p style="font-size: 12px; margin-left: 2px;">{{ consultation.consultation_description|truncatechars:100 }}</p>
+            </div>
+          </div>
+          </a>
+          {% endwith %}
+          {% empty %}
+          <p class="list-group-item">Your Wish List is Empty.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% endblock %}

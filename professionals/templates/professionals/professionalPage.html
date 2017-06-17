@@ -1,0 +1,61 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}{{professional.professional_full_name}}{% endblock %}
+{% block meta_description %}{{professional.professional_main_page_meta_description}}{% endblock %}
+{% block page_content %}
+<div class="container">
+ <div class="row">
+  {#Show Consultation#################}
+    {% if object.s_article == "y" or object.s_product == "y" or object.s_consultation == "y" or object.s_ads == "y" %}
+      <div class="col-xs-12 col-sm-8 col-md-8">
+    {% else %}
+      <div class="col-xs-12 col-sm-12 col-md-12">
+    {% endif %}
+      <!--Consultation Introduction Starts-->
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+            <div class="panel panel-default" style="margin-bottom: 10px">
+              <div class="panel-heading"><strong>About {{professional.professional_full_name}}</strong></div>
+              <div class="panel-body">
+		<img class="pull-left img-circle img-thumbnail" style="margin-right: 8px;" src="{% static 'img' %}{% url 'professionals:index' %}{{professional.professional_small_picture_url}}" alt="{{professional.professional_full_name}}">
+		{{professional.professional_main_page_content|safe}}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  {#Get Suggested Articles, Consultations or Ads#######################}
+    {% if object.s_article == "y" and object.s_consultation == "n" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'professionals/professional_articles.html'%}
+      </div>
+    {% elif object.s_article == "n" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'professionals/professional_articles.html'%}
+      </div>
+    {% elif object.s_article == "y" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'professionals/professional_articles.html'%}
+        {% include 'professionals/professional_consultations.html'%}
+      </div>
+    {% endif %}
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+        $('.fa-chevron-circle-left').tooltip({animation:false, container: 'body', html:true});
+        $('.fa-chevron-circle-right').tooltip({animation:false, container: 'body', html:true});
+        var obj = null;
+        if($("#suggestedArticleSlider").length > 0){
+          $("#suggestedArticleSlider").carousel({
+           interval: 10000
+          });
+        }
+        if($("#suggestedConsultationSlider").length > 0){
+          $("#suggestedConsultationSlider").carousel({
+            interval: 10000
+          });
+        }
+{% endblock %}

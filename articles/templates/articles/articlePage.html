@@ -1,0 +1,122 @@
+{% extends 'home/defaultBasePage.html' %}
+{% block meta_title %}{{article.article_title}}{% endblock %}
+{% block meta_description %}{{article.article_meta_description}}{% endblock %}
+{% block page_content %}
+  <div class="container">
+    <div class="row">
+  {#Show Article#################}
+  {% if perms.articles.add_article or article.article_status == "p" %}
+    {% if article.s_article == "y" or article.s_product == "y" or article.s_consultation == "y" or article.s_ads == "y" %}
+      <div class="col-xs-12 col-sm-8 col-md-8" style="padding-left: 5px; padding-right: 5px;">
+    {% else %}
+      <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+    {% endif %}
+        <!--Article Introduction Starts-->
+        <div class="bs-callout bs-callout-title">
+          <h3 style="margin-bottom: 1px;">{{ article.article_title }}</h3>
+          {#Article Categories################}
+          {% if articleCategories|length > 0 %}
+            <div style="margin-bottom: 2px;">
+              {% for category in articleCategories %}
+                <a href="{% url 'categories:categoryPage' category.article_category.slug %}" class="label label-{{ category.article_category.category_style }}"><strong>{{ category.article_category.category_name }}</strong></a>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {#########}
+          <a href="{% url 'professionals:professionalPage' article.article_author.slug %}" class="label label-default"><strong>{{ article.article_author }}</strong></a>
+        </div>
+        <!-- Article Introduction Ends-->
+        <!--Article Content Starts -->
+          {{ article.article_content|safe }}
+        <!--Article Content Ends -->
+        <!--Share Starts-->
+          {% include 'articles/share.html'%}
+        <!--Share Ends-->
+        <!--Sources and References-->
+          {% include 'articles/sources_and_references.html'%}
+        <!--Sources and References Ends-->
+        <!--Comment Starts-->
+          {% include 'articles/comment.html'%}
+        <!--Comment Ends-->
+      </div>
+  {#Get Suggested Articles, Consultations or Ads##########################}
+    {% if object.s_article == "y" and object.s_consultation == "n" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_articles.html'%}
+      </div>
+    {% elif object.s_article == "n" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_consultations.html'%}
+      </div>
+    {% elif object.s_article == "y" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_articles.html'%}
+        {% include 'articles/suggested_consultations.html'%}
+      </div>
+    {% endif %}
+  {#Dont Show Article#############}
+  {% elif not perms.articles.add_article and article.article_status == "w" %}
+    <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+      <div class="alert alert-danger text-center"><strong>This Article has been temporarily withdrawn.</strong></div>
+    </div>
+  {% elif not perms.articles.add_article and article.article_status == "d" %}
+    <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+      <div class="alert alert-danger text-center"><strong>This Article is unpublished.</strong></div>
+    </div>
+  {% endif %}
+  {#########}
+
+    </div>
+  </div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+
+	//Bootstrap Tooltip
+	$('.fa-chevron-circle-left').tooltip({animation:false, container: 'body', html:true});
+	$('.fa-chevron-circle-right').tooltip({animation:false, container: 'body', html:true});
+	var obj = null;
+	if($("#suggestedArticleSlider").length > 0){
+          $("#suggestedArticleSlider").carousel({
+           interval: 10000
+          });
+	}
+        if($("#suggestedConsultationSlider").length > 0){
+          $("#suggestedConsultationSlider").carousel({
+            interval: 10000
+          });
+        }
+	//Disqus JS
+	var disqusLoad = false;
+	var clicked = false;
+        $('#activeDisqusContent').click(function(e) {
+          if (!clicked) {
+            $('#activeDisqusContent').removeClass('btn-primary').addClass('btn-default').html('<i class="fa fa-lg fa-comments" style="margin-right: 4px;"></i>Hide Comments by Disqus');
+            $('#disqusContent').show();
+            //jQuery().aygedAlert($(window).scrollTop());
+            // $(window).scrollTop()+=200;
+            if (!disqusLoad) {
+              e.preventDefault();
+              $.ajaxSetup({cache: true});
+              $.getScript("https://gonaturalistic.disqus.com/embed.js");
+              $.ajaxSetup({cache: false});
+              disqusLoad = true;
+            }
+            clicked = true;
+          } else {
+            $('#activeDisqusContent').removeClass('btn-default').addClass('btn-primary').html('<i class="fa fa-lg fa-comments" style="margin-right: 4px;"></i>Show Comments by Disqus');
+            $('#disqusContent').hide();
+            clicked = false;
+          }
+        });
+        $('#collapseOne').on('show.bs.collapse', function() {
+          $('#srButton').html('<i class="fa fa-lg fa-angle-up" style="margin-right: 4px;"></i>Hide Sources and References');
+        });
+        $('#collapseOne').on('hide.bs.collapse', function() {
+          $('#srButton').html('<i class="fa fa-lg fa-angle-down" style="margin-right: 4px;"></i>Show Sources and References');
+        });
+
+
+{% endblock %}

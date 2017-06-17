@@ -1,0 +1,81 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}GoNaturalistic - Articles{% endblock %}
+{% block meta_description %}GoNaturalistic - Articles{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-info" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>Articles</strong>
+        <div class="pull-right">
+          <div class="dropdown">
+            <a id="articlePageConf" data-toggle="dropdown" href="#">
+              <i class="fa fa-cog fa-fw" data-toggle="tooltip" data-placement="bottom" title="<strong>Settings</strong>"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="articlePageConf">
+              <li class="dropdown-header" style="font-size:12px;">Articles Per Page</li>
+              <li style="font-size:12px;"><a href="{% url 'articles:index' %}?perPage=5&amp;sortBy={{sortBy}}">Show 5</a></li>
+              <li style="font-size:12px;"><a href="{% url 'articles:index' %}?perPage=10&amp;sortBy={{sortBy}}">Show 10</a></li>
+              <li style="font-size:12px;"><a href="{% url 'articles:index' %}?perPage=20&amp;sortBy={{sortBy}}">Show 20</a></li>
+              <li class="divider"></li>
+              <li class="dropdown-header" style="font-size:12px;">Sort By</li>
+              <li style="font-size:12px;"><a href="{% url 'articles:index' %}?perPage={{page_obj.paginator.per_page}}">Latest Articles</a></li>
+              <li style="font-size:12px;"><a href="{% url 'articles:index' %}?perPage={{page_obj.paginator.per_page}}&amp;sortBy=p">Most Popular Articles</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" style="padding: 0px;">
+        <div class="list-group" style=" margin-bottom: 0px;">
+          {% for article in latest_article_list %}
+          <a href="{% url 'articles:articlePage' article.slug %}" class="list-group-item" style=" padding: 10px; border: none; border-top: 1px solid #bce8f1" >
+          <div class="media">
+            <img class="img-rounded pull-left" src="{% static 'img' %}{% url 'articles:index' %}{{article.article_small_picture_url}}" alt="{{ article.article_title }}">
+            <div class="media-body">
+              <h4 class="media-heading" style="margin-bottom: 2px;">{{ article.article_title }}</h4>
+              {#Article Categories################}
+              {% with articleCategories=article.article_category_set.all %}
+              {% if articleCategories|length > 0 %}
+                <div style="margin-bottom: 2px;">
+                {% for category in articleCategories %}
+                  <span class="label label-{{ category.article_category.category_style }}"><strong>{{ category.article_category.category_name }}</strong></span>
+                {% endfor %}
+                </div>
+              {% endif %}
+              {% endwith %}
+              {#########}
+              <p style="font-size: 12px; margin-left: 2px;">{{ article.article_description|truncatechars:100 }}</p>
+            </div>
+          </div>
+          </a>
+          {% empty %}
+          <p class="list-group-item">There is no Articles.</p>
+          {% endfor %}
+        </div>
+        <div class="panel-footer text-center">
+        <ul class="pager" style="margin:0px;">
+          {% if page_obj.has_previous %}
+          <li style="margin-right:4px;"><a href="{% url 'articles:index' %}?page={{ page_obj.previous_page_number }}&amp;perPage={{page_obj.paginator.per_page}}&sortBy={{sortBy}}">Previous</a></li>
+          {% else %}
+          <li class="disabled" style="margin-right:4px;"><a href="#">Previous</a></li>
+          {% endif %}
+          {% if page_obj.has_next %}
+          <li><a href="{% url 'articles:index' %}?page={{ page_obj.next_page_number }}&perPage={{page_obj.paginator.per_page}}&amp;sortBy={{sortBy}}">Next</a></li>
+          {% else %}
+          <li class="disabled"><a href="#">Next</a></li>
+          {% endif %}
+        </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+$(".fa-cog").tooltip({animation:false, container: 'body', html:true});
+{% endblock %}

@@ -1,0 +1,58 @@
+<div class="modal fade" id="getAppointmentModal" tabindex="-1" role="dialog" aria-labelledby="getAppointmentModal" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="modalTitleId">Please Wait...</h4>
+      </div>
+      <div class="modal-body" id="modalBodyId">
+	<div id="modalBodyLoader"><p class="text-center"><i class="fa fa-lg fa-spinner fa-spin fa-fw text-primary"></i></p></div>
+	<div id="modalBodyMethod" style="display:none;"><div class="container" style="max-width: 300px;"></div></div>
+	<div id="modalBodyDuration" style="display:none;"><div class="container" style="max-width: 300px;"></div></div>
+	<div id="modalBodyDate" style="display:none;">
+          <div id="monthNav" class="text-center" style="margin-bottom: 0px;">
+	  </div>
+          <table class="table table-bordered" style="font-size: 10px;margin-bottom: 8px;"></table>
+	</div>
+        <div id="modalBodyTime" style="display:none;">
+          <table class="table table-bordered" style="font-size: 10px;margin-bottom: 8px;"></table>
+        </div> 
+        <div id="modalBodyDetails" style="display:none;"><table class="table table-bordered" style="font-size: 10px;margin-bottom: 0px;"></table></div>
+	<div id="modalChargeSuccess" style="display:none; margin-bottom:0px;">
+          <div class="alert alert-success" style="margin-bottom:0px;">
+            <p><strong>Thank you. Your consultation has been booked successfully.</strong></p>
+            <p>To view your consultation, please <a href="{% url 'users:consultations' user.pk %}">Click here.</a></p>
+          </div>
+	</div>
+        <div id="modalChargeFail" style="display:none; margin-bottom:0px;">
+          <div class="alert alert-danger" style="margin-bottom:0px;">
+            <p><strong>Sorry, your consultation could not be booked because your card was declined.</strong></p>
+            <p>Please, contact your bank to learn more details.</p>
+          </div>
+        </div>
+        <div id="modalChargeWrong" style="display:none; margin-bottom:0px;">
+          <div class="alert alert-danger" style="margin-bottom:0px;">
+            <p><strong>Sorry, your consultation could not be booked because something went wrong.</strong></p>
+            <p>Please, try again in a litle bit.</p>
+          </div>
+        </div>
+        <div id="modalNotAvailable" style="display:none; margin-bottom:0px;">
+          <div class="alert alert-danger" style="margin-bottom:0px;">
+            <p><strong>Sorry, your consultation could not be booked because selected date and time is no longer available.</strong></p>
+            <p>Please, click the <strong>back button</strong> to select another one.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="margin-top:0px;padding-top: 12px;padding-bottom: 12px;">
+        <button type="button" class="btn btn-default btn-sm disabled pull-left" id="modalFooterBackButton">
+          <i class="fa fa-fw fa-chevron-left"></i></span><strong>Back</strong>
+        </button>
+	<button type="button"  data-dismiss="modal" class="btn btn-default btn-sm">Close</button>
+        <button type="submit" class="btn btn-success btn-sm disabled" id="doneButton" style="margin-left:4px;">
+          <span class="glyphicon glyphicon-ok" style="margin-right: 4px;"></span><strong>Done</strong>
+        </button>
+      </div>      
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <title>{% block meta_title %}{% endblock %}</title>
+    {% include 'home/head.html' %}
+  </head>
+  <body>
+    <div id="loaderContent"><span id="loaderLeaf" class="glyphicon glyphicon-leaf loaderLeafStyle"></span></div>
+    <div id="wrap">
+      <!--Search DropDown-->
+      <div id="searchDropdown" class="dropdown" style="position:fixed;z-index:10000;">
+        <ul id="searchResultHtml" class="dropdown-menu" role="menu"></ul>
+      </div>
+      <!--Search End-->
+      <!--Master Nav -->
+      {% include 'home/emptyNavbar.html' %}
+      <!--Master Nav Ends-->
+    <!--Page Content-->
+    <div id="pageContent" style="display:none; margin-bottom:5px;">
+    {% block page_content %}{% endblock %}
+    </div>
+    <!--Page Constent Ends-->
+    </div>
+    <!--Footer Content Starts-->
+    {% include 'home/footer.html'%}
+    <!--Footer Content Ends-->
+    <!--.JS-->
+    {% include 'home/jsFiles.html' %}
+    <!--.JS Ends-->
+    <!--Custom JS-->
+    <script>
+      $(document).ready(function() {
+        $('#wrap').css("paddingTop", "56px");
+        jQuery().gocodemeLoadImages(function() {
+          $("#loaderContent").fadeOut("fast", function(e) {
+            $("#pageContent").fadeIn("fast");
+          });
+        });
+        {% block pageJs %}{% endblock %}
+      });
+      </script>
+    <!--Custom JS ends-->
+  </body>
+</html>

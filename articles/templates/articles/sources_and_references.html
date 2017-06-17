@@ -1,0 +1,17 @@
+<div class="panel-group" id="accordion" style="margin-bottom: 4px;">
+  <div class="panel panel-default">
+    <div class="panel-heading" style="padding-left:10px;">
+      <a id="srButton" class="btn btn-default btn-sm" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+        <i class="fa fa-lg fa-angle-down" style="margin-right: 4px;"></i>Show Sources and References
+      </a>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+        <!--Article Sources and References Starts-->
+        {{article.article_sources_references|safe}}
+        <!--Article Sources and References Finishes-->
+      </div>
+    </div>
+  </div>
+</div>
+

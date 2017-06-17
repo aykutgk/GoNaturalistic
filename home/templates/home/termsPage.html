@@ -1,0 +1,25 @@
+{% extends 'home/defaultBasePage.html' %}
+{% block meta_title %}{% endblock %}
+{% block meta_description %}{% endblock %}
+{% block page_content %}
+  <div class="container" style="max-width:900px;">
+    <div class="row">
+      <div id="formContent" class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px;padding-top:5px">
+        <div class="panel panel-default" style="margin-bottom: 10px;">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">GoNaturalistic Terms of Service</h4>
+          </div>
+          <div class="panel-body" style="padding-top:10px;padding-bottom:0px;">
+	  {{terms|safe}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+{% endblock %}
+

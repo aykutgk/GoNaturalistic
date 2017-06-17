@@ -1,0 +1,56 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}GoNaturalistic - Categories{% endblock %}
+{% block meta_description %}GoNaturalistic - Categories{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-info" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>Categories</strong>
+        <div class="pull-right">
+          <div class="dropdown">
+            <a id="articlePageConf" data-toggle="dropdown" href="#">
+              <i class="fa fa-cog fa-fw" data-toggle="tooltip" data-placement="bottom" title="<strong>Settings</strong>"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="articlePageConf">
+              <li class="dropdown-header" style="font-size:12px;">Sort By</li>
+              <li style="font-size:12px;"><a href="{% url 'categories:index' %}">Category Name</a></li>
+              <li style="font-size:12px;"><a href="{% url 'categories:index' %}?sortBy=p">Most Popular Categories</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:10px;">
+          {% for category in latest_category_list %}
+           <h4 class="pull-left" style="margin:4px;"><a href="{% url 'categories:index' %}{{category.slug}}/" class="label label-{{ category.category_style }}">{{ category.category_name }}</a></h4>
+          {% empty %}
+          <p>There is no Categories.</p>
+          {% endfor %}
+      </div>
+      <div class="panel-footer text-center">
+        <ul class="pager" style="margin:0px;">
+          {% if page_obj.has_previous %}
+          <li style="margin-right:4px;"><a href="{% url 'categories:index' %}?page={{ page_obj.previous_page_number }}&amp;perPage={{page_obj.paginator.per_page}}&sortBy={{sortBy}}">Previous</a></li>
+          {% else %}
+          <li class="disabled" style="margin-right:4px;"><a href="#">Previous</a></li>
+          {% endif %}
+          {% if page_obj.has_next %}
+          <li><a href="{% url 'categories:index' %}?page={{ page_obj.next_page_number }}&perPage={{page_obj.paginator.per_page}}&amp;sortBy={{sortBy}}">Next</a></li>
+          {% else %}
+          <li class="disabled"><a href="#">Next</a></li>
+          {% endif %}
+        </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+$(".fa-cog").tooltip({animation:false, container: 'body', html:true});
+{% endblock %}

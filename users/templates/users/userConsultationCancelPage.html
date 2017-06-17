@@ -1,0 +1,76 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}{% load user_extras %}
+{% block meta_title %}Cancel My Consultation{% endblock %}{% load user_extras %}
+{% block page_content %}
+<div class="container" style="max-width:600px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+   {% if not object.consultation_status == "c" %}
+   {% if not status == "expired" %}
+   <div id="cancelledContent" class="alert alert-success text-center" style="display:none"><strong>Your Consultation has been cancelled.</strong></div>
+    <div id="cancelErrorContent" class="alert alert-danger" style="margin-bottom:0px;display:none">
+      <p><strong>Sorry, your consultation could not be cancelled because something went wrong.</strong></p>
+      <p>Please, try again in a litle bit.</p>
+    </div>
+    <div id="cancelExpiredContent" class="alert alert-danger text-center" style="display:none"><strong>This Consultation is Expired.</strong></div>    
+    <div class="panel panel-default" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>Cancel My Consultation</strong>
+      </div>
+      <div class="panel-body" style="padding:10px;">
+        <table class="table table-bordered" style="margin-bottom:8px;">
+	{% with purchase=object.professional_purchased_consultation %}
+          <tr><td>Consultation: </td><td>{{purchase.consultation}}</td></tr>
+          <tr><td>Duration: </td><td>{{object.consultation_order_detail.consultation_duration|cDuration}}</td></tr>
+          <tr><td>Date: </td><td>{{purchase.consultation_day.available_day|date:"l F d, Y"}}</td></tr>
+          <tr><td>Time: </td><td>{{purchase.consultation_time}}</td></tr>
+        {% endwith %}
+	</table>
+	<div class="alert alert-danger" style="margin-bottom:0px"><strong>{{status|refundPercent}} percent Cancellation Fee</strong> will be deducted from the total consultation price and payment will be refunded in <strong>7 business</strong> days.</div>
+	<div class="pull-right" style="padding:10px;">
+	  <form id="cancelForm" action="" method="post">
+	    {% csrf_token %}	 
+            <a href="{% url 'users:consultations' user.pk %}" id="backButton" class="btn btn-default btn-sm">Go back</a>
+	    <a href="#" id="cancelButton" class="btn btn-danger btn-sm">CANCEL</a>
+	  </form>
+	</div> 
+      </div>
+    </div>
+   {% else %}
+   <div class="alert alert-danger text-center"><strong>This Consultation is Expired.</strong></div>
+   {% endif %}
+   {% else %}
+    <div class="alert alert-danger text-center"><strong>This Consultation has already been cancelled.</strong></div>
+   {% endif %}
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+$("#cancelButton").click(function(e){
+  $(this).addClass("disabled");
+  $("#backButton").addClass("disabled");
+  $(this).html('<i class="fa fa-spinner fa-fw fa-spin"></i>');
+  serializedData = $("#cancelForm").serialize();
+  $.post("",serializedData, "json").done(function(data) {
+	if(data.status == "cancelled"){
+	  $(".panel").fadeOut(function(){
+	    $("#cancelledContent").fadeIn();
+	  });
+	}else if(data.status == "error"){
+          $(".panel").fadeOut(function(){
+            $("#cancelErrorContent").fadeIn();
+          });
+	}else if(data.status == "expired"){
+          $(".panel").fadeOut(function(){
+            $("#cancelExpiredContent").fadeIn();
+          });
+	}
+  }).fail(function() {
+    jQuery().gocodemeAlert("Sorry, your request could not be processed<br>Reloading the page...", "danger");
+      setTimeout(function() {
+        location.reload();
+      }, 3000);
+  });
+  e.preventDefault();
+});
+{% endblock %}

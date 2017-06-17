@@ -1,0 +1,151 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}{{gnTitle}}{% endblock %}
+{% block meta_description %}{{gnDescription}}{% endblock %}
+{% block page_content %}
+  <div class="container">
+    {#Slider Content#######}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px">
+          <div id="slider" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators hidden-xs">
+             {% for slide in slides %}
+               {% if forloop.counter0 == 0  %}
+                <li data-target="#slider" data-slide-to="{{forloop.counter0}}" class="active"></li>
+               {% else %}
+                <li data-target="#slider" data-slide-to="{{forloop.counter0}}"></li>
+	       {% endif %}
+             {% endfor %}
+            </ol>
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+             {% for slide in slides %}
+	       {% if forloop.counter == 1  %}
+                <div class="item active">
+	       {% else %}
+                <div class="item">
+	       {% endif %}
+		  {% if slide.type == "a" %}
+                    <a href="{% url 'articles:index' %}{{slide.article.slug}}"><img class="img-responsive" src="{% static 'img' %}{% url 'articles:index' %}{{slide.article.article_large_picture_url}}" alt="{{ slide.article.article_title }}"></a>
+                    <div class="carousel-caption ctbg">
+                        <a href="{% url 'articles:index' %}{{slide.article.slug}}" class="carousel-title" title="{{ slide.article.article_title }}"><h3>{{ slide.article.article_title }}</h3></a>
+                        <p class="hidden-xs" style="margin-left: 4px;margin-right: 4px; margin-bottom: 5px;">{{ slide.article.article_description|truncatechars:180 }}</p>
+                        <a href="{% url 'articles:index' %}{{slide.article.slug}}" class="btn btn-sm btn-primary hidden-xs" style="margin-bottom: 5px;">Read Article <span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </div>		  
+		  {% elif slide.type == "c" %}
+                    <a href="{% url 'consultations:index' %}{{slide.consultation.slug}}"><img class="img-responsive" src="{% static 'img' %}{% url 'consultations:index' %}{{slide.consultation.consultation_large_picture_url}}" alt="{{ slide.consultation.cosultation_title }}"></a>
+                    <div class="carousel-caption ctbg">
+                        <a href="{% url 'consultations:index' %}{{slide.consultation.slug}}" class="carousel-title" title="{{ slide.consultation.consultation_title }}"><h3>{{ slide.consultation.consultation_title }}</h3></a>
+                        <p class="hidden-xs" style="margin-left: 4px;margin-right: 4px; margin-bottom: 5px;">{{ slide.consultation.consultation_description|truncatechars:180 }}</p>
+                        <a href="{% url 'consultations:index' %}{{slide.consultation.slug}}" class="btn btn-sm btn-success hidden-xs" style="margin-bottom: 5px;">View Consultation <span class="glyphicon glyphicon-chevron-right"></span></a>
+                    </div>
+		  {% else %}
+                    <a href="{{slide.custom_url}}"><img class="img-responsive" src="{% static 'img' %}/custom/{{slide.custom_large_picture_url}}" alt="{{ slide.custom_title }}"></a>
+                    <div class="carousel-caption ctbg">
+			{% if slide.custom_url %}
+                        <a href="{{slide.custom_url}}" class="carousel-title" title="{{ slide.custom_title }}"><h3>{{ slide.custom_title }}</h3></a>
+			{% else %}
+			<h3>{{ slide.custom_title }}</h3>
+			{% endif %}
+			{% if slide.custom_only_for == "m" %}
+                          <p class="hidden-xs" style="margin-left: 4px;margin-right: 4px; margin-bottom: 5px;">Hi {{user.first_name|title}}, {{ slide.custom_description|truncatechars:180 }}</p>
+			{% else %}
+                          <p class="hidden-xs" style="margin-left: 4px;margin-right: 4px; margin-bottom: 5px;">{{ slide.custom_description|truncatechars:180 }}</p>	
+			{% endif %}
+			{{slide.custom_button_content|safe}}
+                    </div>
+		  {% endif %}
+                </div>
+             {% endfor %}
+            </div>
+            <!-- Controls -->
+            <a class="left carousel-control" href="#slider" data-slide="prev">
+            	<span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#slider" data-slide="next">
+            	<span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+     {##################################}
+     {#Popular Articles#################}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px;padding-top:5px">
+          <div class="panel panel-info" style="margin-bottom: 10px;">
+            <div class="panel-heading">
+               <strong>Popular Articles</strong>
+            </div>
+            <div class="panel-body" style="padding-top:10px;padding-bottom:10px;">      
+              <div class="row">
+	      {% for article in popularArticles %}
+                <div class="col-xs-12 col-sm-12 col-md-3" style="padding:10px;">
+                        <div class="thumbnail" style="margin:0px;">
+                            <div class="caption">
+                                <h4 style="margin-bottom: 2px;">{{ article.article.article_title }}</h4>
+				{% for category in article.article.article_category_set.all %}
+                                  <a href="{% url 'categories:index' %}{{category.article_category.slug}}/" class="label label-{{ category.article_category.category_style }}"><strong>{{ category.article_category.category_name }}</strong></a>
+				{% endfor %}
+                                <p>{{ article.article.article_description|truncatechars:120 }}</p>
+                                <p class="text-center" style="min-width: 185px;">
+                                    <a href="{% url 'articles:index' %}{{article.article.slug}}" class="btn btn-sm btn-primary">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                </p>
+                            </div>
+                        </div>
+                </div>
+	      {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {#Popular Consultations#######}
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px;padding-top:5px">
+          <div class="panel panel-success" style="margin-bottom: 10px;">
+            <div class="panel-heading">
+               <strong>Popular Consultations</strong>
+            </div>
+            <div class="panel-body" style="padding-top:10px;padding-bottom:10px;">
+              <div class="row">
+              {% for consultation in popularConsultations %}
+                <div class="col-xs-12 col-sm-12 col-md-3" style="padding:10px;">
+                        <div class="thumbnail" style="margin:0px;">
+                            <div class="caption">
+                                <h4 style="margin-bottom: 2px;">{{ consultation.consultation.consultation_title }}</h4>
+                                {% for category in consultation.consultation.consultation_category_set.all %}
+                                  <a href="{% url 'categories:index' %}{{category.consultation_category.slug}}/" class="label label-{{ category.consultation_category.category_style }}"><strong>{{ category.consultation_category.category_name }}</strong></a>
+                                {% endfor %}
+                                <p>{{ consultation.consultation.consultation_description|truncatechars:120 }}</p>
+                                <p class="text-center" style="min-width: 185px;">
+                                    <a href="{% url 'consultations:index' %}{{consultation.consultation.slug}}" class="btn btn-sm btn-success">Learn More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                                </p>
+                            </div>
+                        </div>
+                </div>
+              {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    {##############################}
+  </div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+  $("#navHome a").click(function(e){
+    e.preventDefault();
+  });
+  $('#slider').carousel({
+    interval: 10000 
+  });
+  $('#slider').on('slide.bs.carousel', function(){
+    $(".carousel-caption").fadeOut();
+  });
+  $('#slider').on('slid.bs.carousel', function(){
+    $(".active .carousel-caption").fadeIn();
+  });
+{% endblock %}

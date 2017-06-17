@@ -1,0 +1,102 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}{% load user_extras %}
+{% block meta_title %}My Consultations{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-success" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>My Consultations</strong>
+        <div class="pull-right">
+          <div class="dropdown">
+            <a id="consultationPageConf" data-toggle="dropdown" href="#" class="text-success">
+              <i class="fa fa-cog fa-fw" data-toggle="tooltip" data-placement="bottom" title="<strong>Settings</strong>"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="consultationPageConf">
+              <li class="dropdown-header" style="font-size:12px;">Per Page</li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage=2&amp;sortBy={{sortBy}}">Show 2</a></li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage=4&amp;sortBy={{sortBy}}">Show 4</a></li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage=8&amp;sortBy={{sortBy}}">Show 8</a></li>
+              <li class="divider"></li>
+              <li class="dropdown-header" style="font-size:12px;">Sort By</li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage={{page_obj.paginator.per_page}}">All</a></li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage={{page_obj.paginator.per_page}}&amp;sortBy=u">Upcoming</a></li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage={{page_obj.paginator.per_page}}&amp;sortBy=s">Completed</a></li>
+              <li style="font-size:12px;"><a href="{% url 'users:consultations' user.pk %}?perPage={{page_obj.paginator.per_page}}&amp;sortBy=c">Cancelled</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:0px;">
+	<ul class="list-group" style=" margin-bottom: 0px;">
+	{% for userConsultationPurchase in myconsultations %}
+	  {% with purchase=userConsultationPurchase.professional_purchased_consultation %}
+	  <li class="list-group-item" style="border-color:#d6e9c6;">
+	    <div class="media">
+	      <img class="img-rounded pull-left" src="{% static 'img' %}{% url 'consultations:index' %}{{purchase.consultation.consultation_small_picture_url}}" alt="{{purchase.consultation}}">
+	      <div class="media-body">
+	        <a href="{% url "consultations:consultationPage" purchase.consultation.slug %}" title="{{ purchase.consultation }}"><h4 class="media-heading" style="margin-bottom: 6px;">{{ purchase.consultation }}</h4></a>
+		<div class="row">
+		  <div class="col-xs-12 col-sm-6 col-md-6">
+		   <table class="table">
+                    <tr><td>Status: </td><td>{{userConsultationPurchase.consultation_status|cStatus}}</td></tr>
+                    <tr><td>Method: </td><td>{{purchase.consultation_method.consultation_method_name|cMethod}}</td></tr>
+                    <tr><td>Duration: </td><td>{{userConsultationPurchase.consultation_order_detail.consultation_duration|cDuration}}</td></tr>
+		    {% if not userConsultationPurchase.consultation_status == "c" %}
+                    <tr><td>Date: </td><td>{{purchase.consultation_day.available_day|date:"l F d, Y"}}</td></tr>
+                    <tr><td>Time: </td><td>{{purchase.consultation_time}}</td></tr>
+		    {% else %}
+                    <tr><td>Date: </td><td>{{userConsultationPurchase.consultation_order_detail.consultation_date}}</td></tr>
+                    <tr><td>Time: </td><td>{{userConsultationPurchase.consultation_order_detail.consultation_time_period}}</td></tr>
+		    {% endif %}
+		    <tr><td>Time Zone:</td><td>{{userConsultationPurchase.consultation_order_detail.consultation_time_zone}}</td></tr>
+		    {% if userConsultationPurchase.consultation_status == "u" %}
+                    <tr><td>Current time<br> in this time zone:</td><td class="text-danger">{{userConsultationPurchase.consultation_order_detail.consultation_time_zone|currentTime}}</td></tr>
+		    {% endif %}
+		   </table>
+		  </div>
+                  <div class="col-xs-12 col-sm-6 col-md-6">
+		    <div class="well well-sm" style="margin-bottom:2px;">
+		      <a href="{% url 'users:consultationMethodDetails' userConsultationPurchase.pk %}" target="_blank" class="btn btn-default btn-sm btn-block" {{userConsultationPurchase.consultation_status|othersDisabled}}><i class="fa fa-check fa-fw"></i>Get consultation method details</a>
+		      <a href="{% url 'users:consultationMethodChange' userConsultationPurchase.pk  %}" target="_blank" class="btn btn-default btn-sm btn-block" {{userConsultationPurchase.consultation_status|othersDisabled}}><i class="fa fa-exchange fa-fw"></i> Change consultation method</a>
+		      <a href="{% url 'users:consultationNotes' userConsultationPurchase.pk %}" target="_blank" class="btn btn-default btn-sm btn-block" {{userConsultationPurchase.consultation_status|notesDisabled}}><i class="fa fa-info fa-fw"></i>View my consultation notes</a>
+		      <a href="{% url 'users:consultationCancel' userConsultationPurchase.pk %}" class="btn btn-danger btn-sm btn-block" {{userConsultationPurchase.consultation_status|othersDisabled}}><i class="fa fa-times fa-fw"></i>Cancel this consultation</a>
+		    </div>
+                    <div class="well well-sm">
+		      <p class="text-muted" style="font-size:12px;margin-bottom:0px;">You can view our cancellation policy <a href="{% url 'home:policies' %}" target="_blank">here.</a></p>
+		    </div>
+                  </div>
+                </div>	
+              </div>
+            </div>
+	  </li>
+	  {% endwith %}
+	{% empty %}
+	  <li class="list-group-item">
+	    <p>You dont have any consultations</p>
+	  </li>
+	{% endfor %}
+	  </ul>
+        <div class="panel-footer text-center">
+        <ul class="pager" style="margin:0px;">
+          {% if page_obj.has_previous %}
+          <li style="margin-right:4px;"><a href="{% url 'users:consultations' user.pk %}?cPage={{ page_obj.previous_page_number }}&amp;perPage={{page_obj.paginator.per_page}}&sortBy={{sortBy}}">Previous</a></li>
+          {% else %}
+          <li class="disabled" style="margin-right:4px;"><a href="#">Previous</a></li>
+          {% endif %}
+          {% if page_obj.has_next %}
+          <li><a href="{% url 'users:consultations' user.pk %}?cPage={{ page_obj.next_page_number }}&perPage={{page_obj.paginator.per_page}}&amp;sortBy={{sortBy}}">Next</a></li>
+          {% else %}
+          <li class="disabled"><a href="#">Next</a></li>
+          {% endif %}
+        </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+$(".fa-cog").tooltip({animation:false, container: 'body', html:true});
+{% endblock %}

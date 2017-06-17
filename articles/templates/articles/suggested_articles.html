@@ -1,0 +1,62 @@
+<div class="row">{% load staticfiles %}
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+    <div class="panel panel-info" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>Suggested Articles</strong>
+        {% if suggestedArticles.count > 2 %}
+        <span class="pull-right">
+          <a href="#suggestedArticleSlider" data-slide="prev">
+            <i class="fa fa-chevron-circle-left" data-toggle="tooltip" data-placement="bottom" title="<strong>Previous</strong>"></i>
+          </a>
+          <a href="#suggestedArticleSlider" data-slide="next">
+            <i class="fa fa-chevron-circle-right" data-toggle="tooltip" data-placement="bottom" title="<strong>Next</strong>"></i>
+          </a>
+        </span>
+        {% endif %}
+      </div>
+      <div class="panel-body" style="padding: 0px;">
+      {% if suggestedArticles.count > 2 %}
+        <div id="suggestedArticleSlider" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+      {% else %}
+        <div class="list-group" style=" margin-bottom: 0px;">
+      {% endif %}
+      {% for suggestedArticle in suggestedArticles %}
+        {% if suggestedArticles.count > 2 %}
+          {% if not forloop.counter|divisibleby:"2" %}
+            {% if forloop.counter == 1 %}
+          <div class="list-group item active" style=" margin-bottom: 0px;">
+            {% else %}
+          <div class="list-group item" style=" margin-bottom: 0px;">
+            {% endif %}
+          {% endif %}
+        {% endif %}
+            <a href="{% url 'articles:articlePage' suggestedArticle.s_article.slug %}" class="list-group-item" style=" padding: 10px; border: none; border-top: 1px solid #bce8f1" >
+            <div class="media">
+              <img class="img-rounded pull-left" src="{% static 'img' %}{% url 'articles:index' %}{{suggestedArticle.s_article.article_small_picture_url}}" alt="{{ suggestedArticle.s_article.article_title }}">
+              <div class="media-body">
+                <h4 class="media-heading" style="margin-bottom: 2px;">{{ suggestedArticle.s_article.article_title }}</h4>
+                <p style="font-size: 12px; margin-left: 2px;">{{ suggestedArticle.s_article.article_description|truncatechars:75 }}</p>
+              </div>
+            </div>
+            </a>
+        {% if suggestedArticles.count > 2 %}
+          {% if forloop.counter|divisibleby:"2" or forloop.counter == suggestedArticles.count %}
+          </div>
+          {% endif %}
+        {% endif %}
+      {% empty %}
+        <a href="{% url 'articles:index' %}" class="list-group-item"><span class="text-danger">No Suggested Articles Found!</span></a>
+      {% endfor %}
+      {% if suggestedArticles.count > 2 %}
+          </div>
+        </div>
+      {% else %}
+        </div>
+      {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+

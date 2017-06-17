@@ -1,0 +1,65 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}{% load user_extras %}
+{% block meta_title %}My Consultation Notes{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:400px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+   {% if object.consultation_status == "u"  %}
+   {% if not status == "expired" %}
+   <div id="changeMethodContent" class="alert alert-success text-center" style="display:none"><strong>Your Consultation Method has been changed.</strong></div>
+    <div id="changeMethodExpiredContent" class="alert alert-danger text-center" style="display:none"><strong>This Consultation is Expired or Completed.</strong></div>
+    <div class="panel panel-success" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>Change My Consultation Method</strong>
+      </div>
+      <div class="panel-body" style="padding:16px;">
+	<p><strong>Available Methods:</strong></p>
+          <form id="changeMethodForm" action="" method="post">
+            {% csrf_token %}
+	<select class="form-control" id="methodName" name="methodName">
+	{% for method in availableMethods %}
+	  {% if method.consultation_method_name == selectedMethod %}
+            <option value="{{method.consultation_method_name}}" selected>{{method.consultation_method_name|cMethod}}</option>
+	  {% else %}
+            <option value="{{method.consultation_method_name}}">{{method.consultation_method_name|cMethod}}</option>
+	  {% endif %}
+	{% endfor %}
+        </select>
+          <a href="#" id="changeButton" class="btn btn-success btn-sm pull-right" style="margin-top:6px;"><i class="fa fa-refresh fa-fw"></i>Change</a>
+          </form>
+      </div>
+    </div>
+   {% else %}
+   <div class="alert alert-danger text-center"><strong>This Consultation is Expired.</strong></div>
+   {% endif %}
+   {% else %}
+    <div class="alert alert-danger text-center"><strong>This Consultation has been completed or cancelled.</strong></div>
+   {% endif %}
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+$("#changeButton").click(function(e){
+  $(this).addClass("disabled");
+  $(this).html('<i class="fa fa-spinner fa-fw fa-spin"></i>');
+  serializedData = $("#changeMethodForm").serialize();
+  $.post("",serializedData, "json").done(function(data) {
+        if(data.status == "changed"){
+          $(".panel").fadeOut(function(){
+            $("#changeMethodContent").fadeIn();
+          });
+        }else if(data.status == "expired"){
+          $(".panel").fadeOut(function(){
+            $("#changeMethodExpiredContent").fadeIn();
+          });
+        }
+  }).fail(function() {
+    jQuery().gocodemeAlert("Sorry, your request could not be processed<br>Reloading the page...", "danger");
+      setTimeout(function() {
+        location.reload();
+      }, 3000);
+  });
+  e.preventDefault();
+});
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}
+{% block meta_title %}{{object.consultation_title|safe}}{% endblock %}
+{% block meta_description %}{{object.consultation_meta_description|safe}}{% endblock %}
+{% block page_content %}
+<div class="container">
+ <div class="row">
+  {#Show Consultation#################}
+  {% if perms.consultations.add_consultation or object.consultation_status == "p" %}
+    {% if object.s_article == "y" or object.s_product == "y" or object.s_consultation == "y" or object.s_ads == "y" %}
+      <div class="col-xs-12 col-sm-8 col-md-8">
+    {% else %}
+      <div class="col-xs-12 col-sm-12 col-md-12">
+    {% endif %}
+      <!--Consultation Introduction Starts-->
+	<div class="row">
+	  <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+	    <div class="panel panel-success" style="margin-bottom: 10px">
+	      <div class="panel-heading"><strong>Consultation Details</strong></div>
+	      <div class="panel-body" style="padding: 0px;">
+	        <div style="margin-left: 10px;margin-right: 10px; margin-bottom: 10px;">
+	          <h3 class="text-primary" style="margin-bottom: 2px; margin-top: 12px;">{{consultation.consultation_title}}</h3>
+          	  {#Consultation Categories################}
+          	  {% if consultationCategories|length > 0 %}
+            	    <div style="margin-bottom: 2px;">
+              	    {% for category in consultationCategories %}
+                      <a href="{% url 'categories:categoryPage' category.consultation_category.slug %}" class="label label-{{ category.consultation_category.category_style }}"><strong>{{ category.consultation_category.category_name }}</strong></a>
+                    {% endfor %}
+                    </div>
+                  {% endif %}
+                  {#########}
+                  <a href="{% url 'professionals:professionalPage' consultation.consultation_professional.slug %}" class="label label-default"><strong>{{ consultation.consultation_professional }}</strong></a>
+		  <p style="margin-bottom: 4px;margin-top:6px;">{{consultation.consultation_description}}</p>
+		  {% if user.is_authenticated %}
+                    {% if consultation.consultation_professional.consultation_service_status == "e" %}
+                  <button id="appointmentButton" type="button" data-toggle="modal" data-target="#getAppointmentModal"  class="btn btn-success btn-sm" style="margin-top: 4px;margin-right: 2px;">
+		    {% else %}
+                  <button id="appointmentButton" type="button" data-toggle="modal" data-target="#getAppointmentModal"  class="btn btn-success btn-sm disabled" style="margin-top: 4px;margin-right: 2px;">
+		    {% endif %}		
+		  {% else %}
+		  <button type="button" data-toggle="modal" data-target="#loginModal"  class="btn btn-success btn-sm" style="margin-top: 4px;margin-right: 2px;">
+		  {% endif %}
+		    <span class="glyphicon glyphicon-calendar" style="margin-right:4px;"></span>Get Appointment
+		  </button>
+		  {% if user.is_authenticated %}
+		  <button type="button" id="wishlistButton" class="btn btn-primary btn-sm" style="margin-top: 4px;">
+                    {% if inWishlist == "false" %}
+                    <i class="fa fa-lg fa-star-o fa-fw"></i>Add to Wish List
+                    {% else %}
+                    <i class="fa fa-lg fa-star fa-fw"></i>Remove from Wish List
+                    {% endif %}
+		  {% else %}
+		  <button type="button" data-toggle="modal" data-target="#loginModal" class="btn btn-primary btn-sm" style="margin-top: 4px;">
+		    <i class="fa fa-lg fa-star-o fa-fw"></i>Add to Wish List
+		  {% endif %}
+		  </button>
+	        </div>
+		<div style="margin-left:4px;margin-right:0px;">
+		  <ul class="nav nav-tabs" id="myTab">
+		    <li class="active"><a href="#description" data-toggle="tab">Description</a></li>
+		    <li><a href="#practitioner" data-toggle="tab">Professional</a></li>
+		    <li><a href="#reviews" data-toggle="tab">Reviews</a></li>
+		  </ul>
+		  <div class="tab-content">
+		    <div class="tab-pane fade in active" id="description" style="padding-left: 10px;padding-right: 10px;">
+		      <h4 class="text-primary">Consultation Description</h4>
+		      {{consultation.consultation_content|safe}}
+		    </div>
+                    <div class="tab-pane fade" id="practitioner" style="padding-left: 10px;padding-right: 10px;">
+                      <h4 class="text-primary">Professional Biography</h4>
+		      <img class="pull-left img-circle img-thumbnail" style="margin-right: 8px;" src="{% static 'img' %}{% url 'professionals:index' %}{{consultation.consultation_professional.professional_small_picture_url}}" alt="{{consultation.consultation_professional}}">
+                      {{consultation.consultation_professional.professional_consultation_page_content|safe}}
+                    </div>
+                    <div class="tab-pane fade" id="reviews" style="padding: 10px;">
+		      <div>
+		        <div id="disqus_thread"></div>
+			<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+			<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+		      </div>
+                    </div>
+		  </div>
+		</div>
+	      </div>
+	    </div>
+	  </div>
+        </div>
+      </div>
+      <!-- Consultation Introduction Ends-->
+  {#Get Suggested Articles, Consultations or Ads#######################}
+    {% if object.s_article == "y" and object.s_consultation == "n" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_articles.html'%}
+      </div>
+    {% elif object.s_article == "n" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_consultations.html'%}
+      </div>
+    {% elif object.s_article == "y" and object.s_consultation == "y" %}
+      <div class="col-xs-12 col-sm-4 col-md-4">
+        {% include 'articles/suggested_consultations.html'%}
+        {% include 'articles/suggested_articles.html'%}
+      </div>
+    {% endif %}
+  {#Dont Show Consultation#############}
+  {% elif not perms.consultations.add_consultation and consultation.consultation_status == "w" %}
+    <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+      <div class="alert alert-danger text-center"><strong>This consultation has been temporarily withdrawn.</strong></div>
+    </div>
+  {% elif not perms.consultations.add_consultation and consultation.consultation_status == "d" %}
+    <div class="col-xs-12 col-sm-12 col-md-12" style="padding-left: 5px; padding-right: 5px;">
+      <div class="alert alert-danger text-center"><strong>This consultation is unpublished.</strong></div>
+    </div>
+  {% endif %}
+  {#####################################}
+ </div>
+</div>
+{% endblock %}
+{% block extraJsLibs %}
+    <script src="https://checkout.stripe.com/checkout.js"></script>
+{% endblock %}
+{% block consultation_modal %}
+{% include 'consultations/consultation_modal.html' %}
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+{% include 'consultations/consultationPageCustomJs.js' %}
+{% endblock %}

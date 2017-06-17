@@ -1,0 +1,12 @@
+<div class="well well-sm" style="margin-top:2px; margin-bottom:4px;padding-left:10px;">{% load staticfiles %}
+  <div class="btn-group">
+    <a class="btn btn-default btn-sm" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}" target="_blank"><i class="fa fa-2x fa-facebook-square" style="color:#3d58a4;"></i></a>
+    <a class="btn btn-default btn-sm" href="https://twitter.com/share?url=https%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}&text={{article.article_title}} - {{article.article_description|truncatechars:85}} " target="_blank"><i class="fa fa-2x fa-twitter-square" style="color:#00abec;"></i></a>
+    <a class="btn btn-default btn-sm" href="https://plus.google.com/share?url=https%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}" target="_blank"> <i class="fa fa-2x fa-google-plus-square" style="color:#d03f2c;"></i></a>
+    <a class="btn btn-default btn-sm" href="http://www.linkedin.com/shareArticle?mini=true&url=https%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}&title={{article.article_title}}&summary={{article.article_description}}&source=http%3A%2F%2Fwww.gonaturalistic.com/articles/{{article.slug}}/" target="_blank"> <i class="fa fa-2x fa-linkedin-square"  style="color:#3273b1;"></i></a>
+    <a class="btn btn-default btn-sm" href="http://www.pinterest.com/pin/create/button/?url=https%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}%2F1&media={% static 'img' %}{% url 'articles:index' %}{{article.article_large_picture_url}}&description={{article.article_description}}" target="_blank"> <i class="fa fa-2x fa-pinterest-square" style="color:#c31926;"></i></a>
+    <a class="btn btn-default btn-sm" href="mailto:?subject={{article.article_title}}&body={{article.article_title}}%0D%0D{{article.article_description}}%0D%0Dhttps%3A%2F%2Fwww.gonaturalistic.com{% url 'articles:articlePage' article.slug %}"><i class="fa fa-2x fa-envelope-o"></i></a>
+  </div>
+</div>
+
+

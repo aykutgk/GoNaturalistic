@@ -1,0 +1,31 @@
+<header class="navbar navbar-inverse navbar-fixed-top" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".gn-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand">
+        <span class="glyphicon glyphicon-leaf" style="font-size: 14px; padding-right: 2px;" ></span>GoNaturalistic
+      </a>
+    </div>
+    <nav class="collapse navbar-collapse gn-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav navbar-right">
+      <!-- Login Content Starts -->
+        <li id="navCog">
+	{% if url == "/user/signup/" %}
+	  <a href="{% url 'users:login' %}" title="Log in"><span class="glyphicon glyphicon-log-in" style="margin-right: 6px;"></span>Log in</a>
+	{% elif url == "/user/login/" %}
+          <a href="{% url 'users:signup' %}" title="Sign up"><i class="fa fa-lg fa-fw fa-user"></i>Create an account</a>
+	{% else %}
+          <a href="{% url 'users:login' %}" title="Log in"><span class="glyphicon glyphicon-log-in" style="margin-right: 6px;"></span>Log in</a>
+	{% endif %}
+        </li>
+      <!-- Login Content Finishes -->
+      </ul>
+    </nav>
+  </div>
+</header>
+

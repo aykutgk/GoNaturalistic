@@ -1,0 +1,89 @@
+<header class="navbar navbar-inverse navbar-fixed-top" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".gn-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="/" class="navbar-brand"><span class="glyphicon glyphicon-leaf" style="font-size: 14px; padding-right: 2px;" ></span>GoNaturalistic</a>
+    </div>
+    <nav class="collapse navbar-collapse gn-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        {% if url == "/articles/" %}
+        <li class="active" id="navArticles">
+        {% else %}
+        <li id="navArticles">
+        {% endif %}
+          <a href="{% url 'articles:index' %}">Articles</a>
+        </li>
+        {% if url == "/consultations/" %}
+        <li class="active" id="navConsultations">
+        {% else %}
+        <li id="navConsultations">
+        {% endif %}
+          <a href="{% url 'consultations:index' %}">Consultations</a>
+        </li>
+
+        {% if url == "/professionals/" %}
+        <li class="active" id="navProfessionals">
+        {% else %}
+        <li id="navProfessionals">
+        {% endif %}
+          <a href="{% url 'professionals:index' %}">Professionals</a>
+        </li>
+
+        {% if url == "/categories/" %}
+        <li class="active" id="navCategories">
+        {% else %}
+        <li id="navCategories">
+        {% endif %}
+          <a href="{% url 'categories:index' %}">Categories</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li id="hiddenNavSearch" style="display: none;">
+          <div class="input-group">
+            <input type="text" class="form-control input-sm" id="searchInput" autocomplete="off" placeholder="Search">
+            <span class="input-group-btn">
+              <button id="closeNavSearch" class="btn btn-info btn-sm" type="button"><i class="fa fa-times-circle"></i></button>
+            </span>
+          </div>
+        </li>
+        <li id="navSearch">
+          <a href="#" id="searchIcon" title="Search"><span class="glyphicon glyphicon-search"></span></a>
+        </li>
+        {% if url == "/" %}
+        <li id="navHome" class="disabled">
+          <a href="#"><span class="glyphicon glyphicon-home"></span></a>
+        {% else %}
+        <li id="navHome">
+          <a href="/"><span class="glyphicon glyphicon-home"></span></a>
+        {% endif %}
+        </li>
+        <!--Login or Account Conf-->
+        {% if user.is_authenticated %}
+        <li id="navCog" class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" title="User"><i class="fa fa-lg fa-user"></i></a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'users:account' user.pk %}"><strong>Hello, {{ user.first_name|title }}</strong></a></li>
+            <li class="divider hidden-xs"></li>
+            <li><a href="{% url 'users:account' user.pk %}"><span class="glyphicon glyphicon-cog" style="margin-right: 6px;"></span>My Account</a></li>
+            <li><a href="{% url 'users:consultations' user.pk %}"><span class="glyphicon glyphicon-check" style="margin-right: 6px;"></span>My Consultations</a></li>
+            <li><a href="{% url 'users:wishlist' user.pk %}"><span class="glyphicon glyphicon-star" style="margin-right: 6px;"></span>My Wish List</a></li>
+            <li class="divider hidden-xs"></li>
+            <li><a href="{% url 'users:logout' %}"><span class="glyphicon glyphicon-log-out" style="margin-right: 6px;"></span>Log Out</a></li>
+          </ul>
+        </li>
+        {% else %}
+        <li id="navCog">
+          <a href="#" title="Log in" data-toggle="modal" data-target="#loginModal"><span class="glyphicon glyphicon-log-in"></span></a>
+        </li>
+        {% endif %}
+        <!--Login or Account Conf Ends-->
+      </ul>
+    </nav>
+  </div>
+</header>
+

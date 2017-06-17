@@ -1,0 +1,60 @@
+{% extends 'home/defaultBasePage.html' %}{% load staticfiles %}{% load user_extras %}
+{% block meta_title %}My Consultation Notes{% endblock %}
+{% block page_content %}
+<div class="container" style="max-width:1000px;">
+ <div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-12"  style="padding-left: 5px;padding-right: 5px;">
+   {% if object.consultation_status == "u"  %}
+   {% if not status == "expired" %}
+    <div class="panel panel-success" style="margin-bottom: 10px">
+      <div class="panel-heading">
+        <strong>My Consultation Method Details</strong>
+      </div>
+      <div class="panel-body" style="padding:16px;">
+{% with method=object.professional_purchased_consultation.consultation_method %}
+  {% if method.consultation_method_name == "s" %}
+    <p><strong>Skype:</strong></p>
+    <ol> 
+      <li><a href="{{method.consultation_method_target_link}}">Install Skype.</a></li>
+      <li>Add me as a contact with my email {{method.consultation_method_email}}.</li>
+      <li>Send me a Skype message including: Your GoNaturalistic Account's Full Name and your GoNaturalsitic E-mail.</li>
+      <li>Log in to Skype at least 15 minutes before your consultation start time.</li>
+      <li>I will call you at your appointment's start time.</li>
+    </ol>
+  {% elif method.consultation_method_name == "ph" %}
+        <p><strong>Phone Call:</strong></p>
+    <ol>
+      <li>Check and Update your phone number under your GoNaturalistic account.</li>
+<li>Choose a comfortable, quiet, and peaceful place to talk at least 15 minutes before your appointment's start time.</li>
+     <li>I will call you at your consultation start time.</li>
+   </ol>   
+  {% elif method.consultation_method_name == "ft" %}
+    <p><strong>FaceTime:</strong></p>
+    <ol>
+      <li>If you are unfamiliar with FaceTime please <a href="{% url 'home:helpcenter' %}" target="_blank" >Click here.</a></li>
+     <li>Add me to your FaceTime Contacts by using my Apple-Id: {{method.consultation_method_email}}</li>
+     <li>Send me a FaceTime message including: Your GoNaturalistic's Accounts Full Name (first and last name).</li>
+      <li>Log in to FaceTime at least 15 minutes before your consultation's start time.</li>
+      <li>I will call you at your appointment's start time.</li>
+</ol>  
+  {% elif method.consultation_method_name == "o" %}
+<p><strong>Face to Face</strong></p>
+<ol>
+<li>No Info</li>
+</ol>
+  {% endif %}
+{% endwith %}
+      </div>
+    </div>
+   {% else %}
+   <div class="alert alert-danger text-center"><strong>This Consultation is Expired.</strong></div>
+   {% endif %}
+   {% else %}
+    <div class="alert alert-danger text-center"><strong>This Consultation has been completed or cancelled.</strong></div>
+   {% endif %}
+  </div>
+ </div>
+</div>
+{% endblock %}
+{% block pageJs %}
+{% endblock %}

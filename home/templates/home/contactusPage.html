@@ -1,0 +1,61 @@
+{% extends 'home/defaultBasePage.html' %}
+{% block meta_title %}{% endblock %}
+{% block meta_description %}{% endblock %}
+{% block page_content %}
+  <div class="container" style="max-width:800px;">
+    <div class="row">
+      <div id="formSentAlert" class="alert alert-success text-center" style="display:none;">Your form was sent <strong>successfully.</strong> We will be in touch with you soon!</div>
+      <div id="formContent" class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px;padding-top:5px">
+        <div class="panel panel-default" style="margin-bottom: 10px;">
+          <div class="modal-header">
+            <h4 class="modal-title" id="myModalLabel">Get in touch!</h4>
+          </div>
+          <div class="panel-body" style="padding-top:10px;padding-bottom:0px;">
+          {{contactus|safe}}
+	  <hr>
+	  <div id="formFailedAlert" class="alert alert-danger text-center" style="display:none;">Something went wrong, please <strong>check your entiries</strong> and try again.</div>
+          <form id="contactusForm" action="" method="post" class="form-horizontal" role="form">
+            <fieldset>
+            {% csrf_token %}
+            <div class="form-group" id="senderFormGroup">
+              <label for="id_sender" class="col-md-2 control-label">Email:</label>
+              <div class="col-md-6">
+                {% if user.is_authenticated %}
+                <input id="id_sender" name="sender" class="form-control" value="{{user}}" readonly>
+                {% else %}
+                {{contactus_form.sender}}
+                {% endif %}
+              </div>
+            </div>
+            <div class="form-group" id="subjectFormGroup">
+              <label for="id_subject" class="col-md-2 control-label">Subject:</label>
+              <div class="col-md-10">
+                {{contactus_form.subject}}
+              </div>
+            </div>
+            <div class="form-group" id="messageFormGroup">
+              <label for="id_message" class="col-md-2 control-label">Message:</label>
+              <div class="col-md-10">
+                {{contactus_form.message}}
+              </div>
+            </div>
+            <div class="form-group modal-footer" style="margin-bottom:0px;">
+              <button id="contactusSendButton" type="submit" class="btn btn-success"><i class="fa fa-send" style="margin-right:4px;"></i>Send</button>
+            </div>
+	    </fieldset>
+	  </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block pageJs %}
+{% if not user.is_authenticated %}
+{% include 'users/userLoginFunc.js' %}
+{% endif %}
+{% include 'home/contactusPageCustomJs.js' %}
+{% endblock %}
+
+
+

@@ -1,0 +1,120 @@
+{% extends 'home/defaultEmptyBasePage.html' %}
+{% block meta_title %}{% endblock %}
+{% block meta_description %}{% endblock %}
+{% block page_content %}
+  <div class="container" style="max-width:600px;">
+    <div class="row">
+
+<div id="formContent" class="col-xs-12 col-sm-12 col-md-12" style="padding-left:5px;padding-right:5px;padding-top:5px">
+  <div class="panel panel-default" style="margin-bottom: 10px;">
+    <div class="modal-header">
+      <h4 class="modal-title" id="myModalLabel">Join GoNaturalistic today.</h4>
+    </div>
+    <div class="panel-body" style="padding-top:10px;padding-bottom:0px;">
+    <!--Form Starts -->
+      <form id="userSignupForm" action="" method="post" class="form-horizontal" role="form">
+        <fieldset>
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="id_first_name" class="col-md-4 control-label">Full Name:</label>
+            <div class="col-md-8">
+              {{ form.first_name }}
+            </div>
+          </div>
+	  <div class="form-group">
+    	    <label for="id_username" class="col-md-4 control-label">Email:</label>
+    	    <div class="col-md-8">
+              {{ form.username }}
+    	    </div>
+	  </div>
+	  <div class="form-group">
+    	    <label for="id_password1" class="col-md-4 control-label">Password:</label>
+    	    <div class="col-md-8">
+              {{ form.password1 }}
+    	    </div>
+	  </div>
+	  <div class="form-group">
+    	    <label for="id_password2" class="col-md-4 control-label">Confirm Password:</label>
+    	    <div class="col-md-8">
+              {{ form.password2 }}
+    	    </div>
+	  </div>
+	  <div class="form-group" style="margin-bottom:0px;">
+    	    <label for="id_password2" class="col-md-4 control-label">Terms:</label>
+    	    <div class="col-md-8">
+              <div class="termsStyle" style="margin-bottom:0px;">
+                <div id="termsScrollBar" style="overflow-y: scroll; height:140px;padding-right:10px;">
+                  <p class="text-muted" style="font-size:11px;">
+                    <span style="font-size:12px;"><strong>By clicking the button, you agree to the terms below:</strong></span>
+                    <div style="font-size:10px;">{{ terms|safe }}</div>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+	  <div class="form-group modal-footer" style="padding-bottom:10px;padding-left:0px;padding-right:0px;">
+            <div class="col-md-12">
+              <div id="shakeButton">
+                <button id="signupSubmitButton" type="submit" class="btn btn-success col-xs-12 col-sm-12 col-md-12">Create My Account</button>
+              </div>
+            </div>
+	  </div>
+        </fieldset>
+      </form>
+    <!--Form Finishes -->
+    </div>
+  </div>
+</div>
+
+
+    </div>
+  </div>
+{% endblock %}
+{% block pageJs %}
+
+	//Sign up Custom Js/////////////////////////////////////
+        $("#userSignupForm").on("submit", function(event) {
+            event.preventDefault();
+            var serializedData = $("#userSignupForm").serialize();
+            var formArray = $("#userSignupForm").serializeArray();
+            var flag = false;
+            flag = validateForm(formArray);
+            if (flag) {
+                $("#shakeButton").effect("shake", {distance: 8, times: 4}, 1000);
+            } else {
+                $("#signupSubmitButton").html('<i class="fa fa-spinner fa-fw fa-spin"></i>');
+                $("fieldset").attr("disabled", true);
+                $.post("/user/signup/", serializedData, "json").done(function(data) {
+                    $.each(data, function(key, val) {
+                        if (key == "user" && val == "created") {
+                            emailExistError("", "remove");
+                            $(".panel").fadeOut(function() {
+                                ;
+                                jQuery().gocodemeAlert("<p class='text-center'><strong>Welcome to GoNaturalistic.</strong><br>You will be directed to the home page to take advantage of your new user features.</p>","success");
+                            });
+                            setTimeout(function() {
+                                location.assign("/");
+                            }, 5000);
+                        } else if (key == "username" && val == "exist") {
+                            $("fieldset").removeAttr("disabled");
+                            $("#signupSubmitButton").html("Create My Account");
+                            $("#shakeButton").effect("shake", {distance: 8, times: 4}, 1000);
+                            emailExistError("A user with that Email already exists.", "add");
+                        } else if (key == "username" && val == "invalid") {
+                            $("fieldset").removeAttr("disabled");
+                            $("#signupSubmitButton").html("Create My Account");
+                            $("#shakeButton").effect("shake", {distance: 8, times: 4}, 1000);
+                            emailExistError("Please enter a valid email address.", "add");
+                        }
+                    });
+                }).fail(function() {
+                    jQuery().gocodemeAlert("Sorry, your request could not be processed<br>Reloading the page...", "danger");
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                });
+            }
+        });
+	////////////////////////////////////////////////////////
+
+{% endblock %}
